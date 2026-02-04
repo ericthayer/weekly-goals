@@ -5,7 +5,7 @@ import { WeeklyData, DayOfWeek, PlannerEntry, DailyEntry, RetroEntry } from './t
 import { PlannerCard } from './components/PlannerCard';
 import { DailyCard } from './components/DailyCard';
 import { RetroCard } from './components/RetroCard';
-import { summarizeWeek, suggestActionItems } from './services/geminiService';
+import { summarizeWeek, suggestActionItems, suggestDailyGoal } from './services/geminiService';
 
 const App: React.FC = () => {
   const [weeklyData, setWeeklyData] = useState<WeeklyData>(() => {
@@ -100,6 +100,15 @@ const App: React.FC = () => {
       const currentLog = weeklyData.daily[day].log;
       const formattedSuggestions = suggestions.map(s => `• ${s}`).join('\n');
       updateDaily(day, 'log', currentLog ? `${currentLog}\n\nSuggested Actions:\n${formattedSuggestions}` : `Suggested Actions:\n${formattedSuggestions}`);
+    }
+  };
+
+  const handleSuggestDailyGoal = async (day: DayOfWeek) => {
+    const plannerGoal = weeklyData.planner[day].goal;
+    if (!plannerGoal) return;
+    const suggestedGoal = await suggestDailyGoal(plannerGoal);
+    if (suggestedGoal) {
+      updateDaily(day, 'goal', suggestedGoal);
     }
   };
 
@@ -201,6 +210,7 @@ const App: React.FC = () => {
                 data={weeklyData.daily[day]}
                 onChange={(f, v) => updateDaily(day, f, v)}
                 onSuggest={() => handleSuggestDailyActions(day)}
+                onSuggestGoal={() => handleSuggestDailyGoal(day)}
               />
             ))}
             <div className="sm:col-span-2 mt-4 md:mt-8">

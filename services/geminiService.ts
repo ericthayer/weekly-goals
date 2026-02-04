@@ -70,3 +70,17 @@ export async function suggestActionItems(dayGoal: string): Promise<string[]> {
     return [];
   }
 }
+
+export async function suggestDailyGoal(plannerGoal: string): Promise<string> {
+  const prompt = `Based on this high-level weekly planning goal: "${plannerGoal}", suggest a single, concise daily execution goal for a developer's daily stand-up/log. Keep it under 15 words.`;
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+    });
+    return response.text?.trim().replace(/^"|"$/g, '') || "";
+  } catch (error) {
+    return "";
+  }
+}

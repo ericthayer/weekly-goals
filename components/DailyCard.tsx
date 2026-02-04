@@ -7,9 +7,10 @@ interface DailyCardProps {
   data: DailyEntry;
   onChange: (field: keyof DailyEntry, value: string | boolean) => void;
   onSuggest?: () => void;
+  onSuggestGoal?: () => void;
 }
 
-export const DailyCard: React.FC<DailyCardProps> = ({ day, data, onChange, onSuggest }) => {
+export const DailyCard: React.FC<DailyCardProps> = ({ day, data, onChange, onSuggest, onSuggestGoal }) => {
   const handleExport = () => {
     const content = `
 ${day.toUpperCase()} DAILY JOURNAL
@@ -73,12 +74,13 @@ Generated on: ${new Date().toLocaleString()}
         <div className="border-b border-teal-200 dark:border-teal-900/50 p-2 flex flex-col relative group/suggest bg-white dark:bg-slate-900/50">
           <div className="flex justify-between items-start">
             <label className="text-[9px] font-black text-teal-600/80 dark:text-teal-500/60 uppercase mb-1">Execution Goal</label>
-            {onSuggest && (
+            {onSuggestGoal && (
                <button 
-                onClick={onSuggest}
+                onClick={onSuggestGoal}
                 className="text-[9px] text-teal-700 dark:text-teal-400 font-black hover:underline opacity-0 group-hover/suggest:opacity-100 transition-opacity uppercase tracking-tighter"
+                title="Sync from Planner"
                >
-                 AI SUGGEST
+                 AI SYNC PLAN
                </button>
             )}
           </div>
@@ -92,8 +94,18 @@ Generated on: ${new Date().toLocaleString()}
         </div>
 
         {/* Row 2: Daily Log */}
-        <div className="col-span-2 border-b border-teal-200 dark:border-teal-900/50 p-2 flex flex-col bg-white/40 dark:bg-slate-950/20">
-          <label className="text-[9px] font-black text-teal-600/80 dark:text-teal-500/60 uppercase mb-1">Sprint Log / Telemetry</label>
+        <div className="col-span-2 border-b border-teal-200 dark:border-teal-900/50 p-2 flex flex-col bg-white/40 dark:bg-slate-950/20 group/log">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-[9px] font-black text-teal-600/80 dark:text-teal-500/60 uppercase">Sprint Log / Telemetry</label>
+            {onSuggest && (
+               <button 
+                onClick={onSuggest}
+                className="text-[8px] text-teal-700 dark:text-teal-400 font-black hover:underline opacity-0 group-hover/log:opacity-100 transition-opacity uppercase tracking-tighter"
+               >
+                 SUGGEST LOG ITEMS
+               </button>
+            )}
+          </div>
           <textarea 
             placeholder="Successes, obstacles, findings..."
             value={data.log}
