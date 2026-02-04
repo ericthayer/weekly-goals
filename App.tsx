@@ -58,6 +58,18 @@ const App: React.FC = () => {
     }));
   };
 
+  const clearPlannerDay = (day: DayOfWeek) => {
+    if (window.confirm(`Clear all planner entries for ${day}?`)) {
+      setWeeklyData(prev => ({
+        ...prev,
+        planner: {
+          ...prev.planner,
+          [day]: { date: '', goal: '', appointments: '', actionItems: '' }
+        }
+      }));
+    }
+  };
+
   const updateDaily = (day: DayOfWeek, field: keyof DailyEntry, value: string | boolean) => {
     setWeeklyData(prev => ({
       ...prev,
@@ -66,6 +78,18 @@ const App: React.FC = () => {
         [day]: { ...prev.daily[day], [field]: value }
       }
     }));
+  };
+
+  const clearDailyDay = (day: DayOfWeek) => {
+    if (window.confirm(`Clear all daily entries for ${day}?`)) {
+      setWeeklyData(prev => ({
+        ...prev,
+        daily: {
+          ...prev.daily,
+          [day]: { completed: false, goal: '', log: '', unplanned: '' }
+        }
+      }));
+    }
   };
 
   const updateRetro = (field: keyof RetroEntry, value: string) => {
@@ -191,6 +215,7 @@ const App: React.FC = () => {
                 data={weeklyData.planner[day]}
                 onChange={(f, v) => updatePlanner(day, f, v)}
                 onSuggest={() => handleSuggestPlannerActions(day)}
+                onClear={() => clearPlannerDay(day)}
               />
             ))}
           </div>
@@ -211,6 +236,7 @@ const App: React.FC = () => {
                 onChange={(f, v) => updateDaily(day, f, v)}
                 onSuggest={() => handleSuggestDailyActions(day)}
                 onSuggestGoal={() => handleSuggestDailyGoal(day)}
+                onClear={() => clearDailyDay(day)}
               />
             ))}
             <div className="sm:col-span-2 mt-4 md:mt-8">

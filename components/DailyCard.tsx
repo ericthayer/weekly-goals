@@ -8,9 +8,10 @@ interface DailyCardProps {
   onChange: (field: keyof DailyEntry, value: string | boolean) => void;
   onSuggest?: () => void;
   onSuggestGoal?: () => void;
+  onClear?: () => void;
 }
 
-export const DailyCard: React.FC<DailyCardProps> = ({ day, data, onChange, onSuggest, onSuggestGoal }) => {
+export const DailyCard: React.FC<DailyCardProps> = ({ day, data, onChange, onSuggest, onSuggestGoal, onClear }) => {
   const handleExport = () => {
     const content = `
 ${day.toUpperCase()} DAILY JOURNAL
@@ -48,16 +49,27 @@ Generated on: ${new Date().toLocaleString()}
       <div className="bg-teal-600 dark:bg-teal-900 text-white dark:text-teal-400 px-3 py-1.5 flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
         <div className="flex items-center gap-2">
           <span>{day}</span>
-          <span className="opacity-40 font-bold group-hover:opacity-100 transition-opacity">LOG_UNIT</span>
+          <span className="opacity-40 font-bold">LOG_UNIT</span>
         </div>
-        <button 
-          onClick={handleExport}
-          className="bg-white/20 dark:bg-white/5 hover:bg-white/40 dark:hover:bg-teal-800/40 text-white px-2 py-0.5 rounded text-[9px] transition-all flex items-center gap-1 border border-white/10 dark:border-teal-700/30"
-          title="Export as Text File"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          EXPORT
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={onClear}
+            className="opacity-0 group-hover:opacity-100 hover:text-white text-teal-200 dark:text-teal-600 transition-all p-0.5"
+            title="Clear Card Entries"
+            aria-label={`Clear entries for ${day}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          <div className="w-px h-3 bg-teal-500/30 opacity-0 group-hover:opacity-100"></div>
+          <button 
+            onClick={handleExport}
+            className="bg-white/20 dark:bg-white/5 hover:bg-white/40 dark:hover:bg-teal-800/40 text-white px-2 py-0.5 rounded text-[9px] transition-all flex items-center gap-1 border border-white/10 dark:border-teal-700/30"
+            title="Export as Text File"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            EXPORT
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-[40px_1fr] xs:grid-cols-[50px_1fr] flex-grow border-t border-teal-200 dark:border-teal-900/50">

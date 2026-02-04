@@ -7,9 +7,10 @@ interface PlannerCardProps {
   data: PlannerEntry;
   onChange: (field: keyof PlannerEntry, value: string) => void;
   onSuggest?: () => void;
+  onClear?: () => void;
 }
 
-export const PlannerCard: React.FC<PlannerCardProps> = ({ day, data, onChange, onSuggest }) => {
+export const PlannerCard: React.FC<PlannerCardProps> = ({ day, data, onChange, onSuggest, onClear }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Shared focus styles for consistency and accessibility
@@ -38,13 +39,23 @@ export const PlannerCard: React.FC<PlannerCardProps> = ({ day, data, onChange, o
     }, 0);
   };
 
-  const hasGoal = data.goal.trim().length > 0;
+  const hasGoal = data.goal.trim().length > 3; // Trigger after a few characters for better UX
 
   return (
     <div className="bg-slate-200 dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full transition-colors group">
       <div className="bg-slate-400 dark:bg-slate-800 text-white dark:text-slate-400 px-3 py-1.5 flex justify-between items-center text-[10px] font-black uppercase tracking-widest transition-colors">
-        <span>{day}</span>
-        <span className="opacity-40 group-hover:opacity-100 transition-opacity">PLANNER_MODULE</span>
+        <div className="flex items-center gap-2">
+          <span>{day}</span>
+          <span className="opacity-40 font-bold">PLANNER_MODULE</span>
+        </div>
+        <button 
+          onClick={onClear}
+          className="opacity-0 group-hover:opacity-100 hover:text-white text-slate-200 dark:text-slate-500 dark:hover:text-slate-300 transition-all p-0.5 rounded"
+          title="Clear Card Entries"
+          aria-label={`Clear entries for ${day}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
       </div>
       
       <div className="grid grid-cols-[60px_1fr] xs:grid-cols-[80px_1fr] flex-grow border-t border-slate-300 dark:border-slate-800">
@@ -86,7 +97,13 @@ export const PlannerCard: React.FC<PlannerCardProps> = ({ day, data, onChange, o
             <div className="flex items-center gap-1.5">
               <label className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase">Action Items & Technical Specs</label>
               {hasGoal && (
-                <span className="flex h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" title="AI suggestions available based on your goal"></span>
+                <div className="flex items-center gap-1 animate-in fade-in zoom-in duration-300" title="AI suggestions available based on your goal">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                </div>
               )}
             </div>
             <div className="flex items-center gap-1.5 opacity-0 group-hover/actions:opacity-100 transition-opacity">
@@ -111,7 +128,11 @@ export const PlannerCard: React.FC<PlannerCardProps> = ({ day, data, onChange, o
               <button 
                 type="button"
                 onClick={onSuggest}
-                className={`text-[9px] font-black hover:underline uppercase tracking-tighter transition-colors ${hasGoal ? 'text-teal-600 dark:text-teal-400' : 'text-slate-400 dark:text-slate-600'}`}
+                className={`text-[9px] font-black hover:underline px-1.5 py-0.5 rounded uppercase tracking-tighter transition-all duration-300 ${
+                  hasGoal 
+                  ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20 shadow-[0_0_10px_rgba(20,184,166,0.1)]' 
+                  : 'text-slate-400 dark:text-slate-600'
+                }`}
                 disabled={!hasGoal}
               >
                 AI SUGGEST
